@@ -1,3 +1,14 @@
 [env]
 PATH = "/home/runner/.local/bin:${PATH}"
 run = "python3 main.py"
+
+[workflows]
+runButton = "Run"
+
+[[workflows.workflow]]
+name = "Run"
+author = 40049192
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python main.py"
