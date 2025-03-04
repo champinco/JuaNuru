@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <title>{{ translations.title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>{{ translations.title }}</h1>
+    <form method="POST" action="{{ url_for('results') }}" enctype="multipart/form-data">
+        <label>{{ translations.address_prompt }}</label><br>
+        <input type="text" name="place" id="place" required><br>
+        <input type="number" name="energy_cost" step="0.01" placeholder="Energy Cost (USD/kWh)" value="0.15"><br>
+        <input type="file" name="photo" accept="image/*"><br>
+        <button type="submit">{{ translations.submit }}</button>
+        <button type="button" id="voice-btn">🎤 Speak</button>
+    </form>
+</body>
+</html>

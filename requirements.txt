@@ -1,0 +1,12 @@
+flask
+geopy
+folium
+numpy
+pandas
+matplotlib
+seaborn
+opencv-python-headless
+scikit-learn
+reportlab
+requests
+werkzeug

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <title>{{ translations.results }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.6.0/confetti.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</head>
+<body>
+    <h1>{{ translations.results }} for {{ data.place }}</h1>
+    <div class="results">
+        <h2>{{ translations.solar_score }}: {{ data.solar_score }} <span id="badge">{{ data.badge }}</span></h2>
+        <p>{{ translations.elevation }}: {{ data.elevation }}</p>
+        <p>{{ translations.peak_sun_hours }}: {{ data.peak_sun_hours }}</p>
+        <p>{{ translations.recommended_system }}: {{ data.recommended_system }}</p>
+        <p>{{ translations.potential_savings }}: ${{ data.potential_savings }}</p>
+        <p>{{ translations.roi }}: {{ data.roi }}</p>
+        <p>{{ translations.carbon_offset }}: {{ data.carbon_offset }} (≈ {{ data.carbon_offset // 40 }} trees)</p>
+    </div>
+    <div id="map">{{ data.map_html | safe }}</div>
+    <img src="{{ url_for('static', filename='charts/' + data.chart_path) }}" alt="Monthly Chart">
+    {% if data.ar_image %}
+        <h3>AR Visualization</h3>
+        <img src="{{ url_for('static', filename='uploads/' + data.ar_image) }}" alt="AR Roof">
+    {% endif %}
+    <div id="live-data"></div>
+    <div id="financing">
+        <h3>{{ translations.financing }}</h3>
+        <input type="range" id="system-size" min="1" max="10" value="{{ data.recommended_system }}">
+        <p>Monthly Cost: $<span id="monthly-cost">{{ (data.recommended_system * 5)|round }}</span></p>
+    </div>
+    <a href="{{ url_for('download', data=data|tojson) }}">{{ translations.download }}</a>
+    <button id="share-btn">{{ translations.share }}</button>
+    <script>
+        fetchLiveData({{ data.lat }}, {{ data.lon }});
+        if ({{ data.solar_score }} > 90) confetti({ particleCount: 100, spread: 70 });
+        document.getElementById('share-btn').onclick = () => shareResults({{ data.solar_score }}, '{{ data.badge }}', '{{ data.place }}');
+    </script>
+</body>
+</html>
