@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <title>{{ translations.title }}</title>
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>{{ translations.title }}</h1>
+    <form method="POST" action="{{ url_for('results') }}" enctype="multipart/form-data">
+        <label>{{ translations.address_prompt }}</label><br>
+        <input type="text" name="place" id="place" required><br>
+        <label>Energy Cost (USD/kWh):</label><br>
+        <input type="number" name="energy_cost" step="0.01" placeholder="0.15" value="0.15"><br>
+        <label>{{ translations.currency_label }}:</label><br>
+        <select name="currency">
+            <option value="KSH">KSH (Kenyan Shilling)</option>
+            <option value="USD">USD (US Dollar)</option>
+            <option value="EUR">EUR (Euro)</option>
+        </select><br>
+        <label>Language:</label><br>
+        <select name="lang">
+            <option value="en" {% if lang == 'en' %}selected{% endif %}>English</option>
+            <option value="sw" {% if lang == 'sw' %}selected{% endif %}>Swahili</option>
+            <option value="fr" {% if lang == 'fr' %}selected{% endif %}>French</option>
+        </select><br>
+        <input type="file" name="photo" accept="image/*"><br>
+        <button type="submit">{{ translations.submit }}</button>
+        <button type="button" id="voice-btn">🎤 {{ translations.submit }}</button>
+    </form>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/static/js/sw.js')
+                    .then(reg => console.log('Service Worker registered', reg))
+                    .catch(err => console.log('Service Worker registration failed', err));
+            });
+        }
+    </script>
+</body>
+</html>

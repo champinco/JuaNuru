@@ -10,3 +10,4 @@ scikit-learn
 reportlab
 requests
 werkzeug
+opencv-python

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <title>{{ translations.results }}</title>
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.6.0/confetti.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</head>
+<body>
+    <h1>{{ translations.results }} for {{ data.place }}</h1>
+    <div class="results">
+        <h2>{{ translations.solar_score }}: {{ data.solar_score }} <span id="badge">{{ data.badge }}</span></h2>
+        <p>{{ translations.elevation }}: {{ data.elevation }}</p>
+        <p>{{ translations.peak_sun_hours }}: {{ data.peak_sun_hours }}</p>
+        <p>{{ translations.recommended_system }}: {{ data.recommended_system }}</p>
+        <p>{{ translations.potential_savings }}: {{ data.currency }} {{ data.potential_savings }}</p>
+        <p>{{ translations.roi }}: {{ data.roi }}</p>
+        <p>{{ translations.carbon_offset }}: {{ data.carbon_offset }} (≈ {{ data.carbon_offset // 40 }} trees)</p>
+        <p>{{ translations.impact }} - {{ translations.share|replace('Share Your Results', 'Jobs Created') }}: {{ data.jobs }}</p>
+        <p>{{ translations.impact }} - {{ translations.share|replace('Share Your Results', 'Households Electrified') }}: {{ data.households }}</p>
+        <p>{{ translations.priority_index }}: {{ data.priority_index }}</p>
+        <p>Population: {{ data.population }} | Electrified: {{ 'Yes' if data.electrified else 'No' }}</p>
+    </div>
+    <h3>{{ translations.potential_map }}</h3>
+    <div id="map">{{ data.map_html | safe }}</div>
+    <img src="{{ url_for('static', filename='charts/' + data.chart_path) }}" alt="Monthly Chart">
+    <div id="live-data"><p>{{ translations.live_data }}: Loading...</p></div>
+    <button id="share-btn">{{ translations.share }}</button>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/static/js/sw.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker failed', err));
+            });
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const cachedResults = localStorage.getItem('lastResults');
+            if (cachedResults && !navigator.onLine) {
+                const data = JSON.parse(cachedResults);
+                document.querySelector('.results').innerHTML = `
+                    <h2>{{ translations.solar_score }}: ${data.solar_score} <span id="badge">${data.badge}</span></h2>
+                    <p>{{ translations.elevation }}: ${data.elevation}</p>
+                    <p>{{ translations.peak_sun_hours }}: ${data.peak_sun_hours}</p>
+                    <p>{{ translations.recommended_system }}: ${data.recommended_system}</p>
+                    <p>{{ translations.potential_savings }}: ${data.currency} ${data.potential_savings}</p>
+                    <p>{{ translations.roi }}: ${data.roi}</p>
+                    <p>{{ translations.carbon_offset }}: ${data.carbon_offset} (≈ ${Math.floor(data.carbon_offset / 40)} trees)</p>
+                    <p>{{ translations.impact }} - {{ translations.share|replace('Share Your Results', 'Jobs Created') }}: ${data.jobs}</p>
+                    <p>{{ translations.impact }} - {{ translations.share|replace('Share Your Results', 'Households Electrified') }}: ${data.households}</p>
+                    <p>{{ translations.priority_index }}: ${data.priority_index}</p>
+                    <p>Population: ${data.population} | Electrified: ${data.electrified ? 'Yes' : 'No'}</p>
+                `;
+                document.getElementById('map').innerHTML = data.map_html;
+                document.getElementById('live-data').innerHTML = '<p>Offline: {{ translations.live_data }} unavailable</p>';
+            } else {
+                fetchLiveData({{ data.lat }}, {{ data.lon }});
+                if ({{ data.solar_score }} > 90) confetti({ particleCount: 100, spread: 70 });
+                document.getElementById('share-btn').onclick = () => shareResults({{ data.solar_score }}, '{{ data.badge }}', '{{ data.place }}');
+            }
+        });
+    </script>
+</body>
+</html>

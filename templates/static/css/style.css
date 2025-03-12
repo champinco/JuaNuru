@@ -1,0 +1,13 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  background: #f4f4f4;
+}
+h1 { color: #2c3e50; }
+form, .results { max-width: 800px; margin: 0 auto; }
+input, select, button { padding: 10px; margin: 5px; }
+button { background: #3498db; color: white; border: none; cursor: pointer; }
+button:hover { background: #2980b9; }
+img { max-width: 100%; }
+#map { height: 300px; }
+#badge { color: #e74c3c; font-weight: bold; }
